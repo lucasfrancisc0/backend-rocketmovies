@@ -142,6 +142,39 @@ class UserController {
     });
   };
 
+  
+  async delete(request, response) {
+    const { old_password } = request.body;
+    const user_id = request.user.id;
+
+
+    const user = await knex("users").where({ id: user_id }).first();
+
+    if(!user) {
+      throw new AppError("Usuário não encotrado.");
+    };
+
+
+    if(!old_password) {
+      throw new AppError("É necessário a senha para a exclusão de conta.");
+    };
+
+
+    const checkPassword = await compare(old_password, user.password);
+
+    if(!checkPassword) {
+      throw new AppError("Senha incorreta.");
+    };
+
+
+    await knex("users").where({ id: user.id }).delete();
+
+
+    response.status(200).json({
+      status: "OK.",
+      message: "Usuário deletado com sucesso."
+    });
+  };
 };
 
 
