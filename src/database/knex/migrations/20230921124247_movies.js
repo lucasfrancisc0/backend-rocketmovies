@@ -9,7 +9,7 @@ exports.up = knex => knex.schema.createTable("movies", table => {
   table.integer("user_id").references("id").inTable("users").onDelete("CASCADE");
   
   table.timestamp("created_at").default(knex.fn.now());
-  table.timestamp("updtaed_at").default(knex.fn.now());
+  table.timestamp("updated_at").default(knex.fn.now());
 });
 
 

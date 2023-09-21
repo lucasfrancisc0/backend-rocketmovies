@@ -120,6 +120,28 @@ class UserController {
       message: "Usuário atualizado com sucesso.",
     });
   };
+
+  async index(request, response) {
+    const user_id = request.user.id;
+
+
+    const user = await knex("users")
+      .select("name", "email", "avatar", "created_at", "updated_at")
+      .where({ id: user_id })
+      .first()
+
+    if(!user) {
+      throw new AppError("Usuário não econtrado.")
+    };
+
+
+    response.status(200).json({
+      status: "OK.",
+      message: "Usuário encontrado com sucesso.",
+      user
+    });
+  };
+
 };
 
 
