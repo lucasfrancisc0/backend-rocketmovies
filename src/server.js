@@ -14,7 +14,7 @@ connectionDataBase();
 
 app.use((error, request, response, next)  => {
   if(error instanceof AppError) {
-    response.status(error.statuCode).json({
+    response.status(error.statusCode).json({
       status: "Error.",
       message: error.message
     });
