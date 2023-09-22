@@ -9,9 +9,9 @@ const authConfig = require("../configs/auth");
 class SessionController {
 
   async create(request, response) {
-
     const { email, password } = request.body;
 
+    
     if(!email || !password) {
       throw new AppError("Preencha todos os campos para autenticar.");
     };
@@ -40,13 +40,12 @@ class SessionController {
     });
 
 
-    response.status(200).json({
+    return response.status(200).json({
       status: "OK.",
       message: "Autenticação realizada com sucesso.",
       user,
       token
     });
-
   };
 };
 

@@ -5,6 +5,7 @@ const { hash, compare } = require("bcryptjs");
 
 class UserController {
   
+
   async create(request, response) {
     const { name, email, password } = request.body;
 
@@ -44,7 +45,7 @@ class UserController {
     await knex("users").insert(user);
 
 
-    response.status(200).json({
+    return response.status(200).json({
       status: "OK.",
       message: "Usuário criado com sucesso.",
     });
@@ -54,8 +55,6 @@ class UserController {
   async update(request, response) {
     const { name, email, password, old_password } = request.body;
     const user_id = request.user.id;
-
-    console.log(name, email, password, old_password)
 
 
     const user = await knex("users").where({ id: user_id }).first();
@@ -107,7 +106,6 @@ class UserController {
 
 
       const hashedPassword = await hash(password, 8);
-
       user.password = hashedPassword;
     };
 
@@ -115,11 +113,12 @@ class UserController {
     await knex("users").where({ id: user.id }).update(user);
     
 
-    response.status(200).json({
+    return response.status(200).json({
       status: "OK.", 
       message: "Usuário atualizado com sucesso.",
     });
   };
+
 
   async index(request, response) {
     const user_id = request.user.id;
@@ -128,14 +127,14 @@ class UserController {
     const user = await knex("users")
       .select("name", "email", "avatar", "created_at", "updated_at")
       .where({ id: user_id })
-      .first()
+      .first();
 
     if(!user) {
-      throw new AppError("Usuário não econtrado.")
+      throw new AppError("Usuário não econtrado.");
     };
 
 
-    response.status(200).json({
+    return response.status(200).json({
       status: "OK.",
       message: "Usuário encontrado com sucesso.",
       user
@@ -170,7 +169,7 @@ class UserController {
     await knex("users").where({ id: user.id }).delete();
 
 
-    response.status(200).json({
+    return response.status(200).json({
       status: "OK.",
       message: "Usuário deletado com sucesso."
     });
