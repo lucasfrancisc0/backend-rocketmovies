@@ -1,49 +1,19 @@
 const knex = require("../database/knex");
 const AppError = require("../utils/AppError");
 const { hash, compare } = require("bcryptjs");
+const UserRepository = require("../repositories/UserRepository");
+const UserCreateService = require("../services/UserCreateService");
 
 
 class UserController {
-  
 
   async create(request, response) {
     const { name, email, password } = request.body;
 
+    const userRepository = new UserRepository();
+    const userCreateService = new UserCreateService(userRepository);
 
-    if(!name || !email || !password) {
-      throw new AppError("Preencha todos os campos para o cadastramento de um novo usuário.");
-    };
-
-
-    const checkEmailExists = await knex("users").where({ email }).first();
-
-    if(checkEmailExists) {
-      throw new AppError("Este email já esta em uso.");
-    };
-
-
-    if(name.length <= 2) {
-      throw new AppError("Nomes de usuário devem conter no mínimo 3 caracteres.");
-    };
-
-
-    if(password.length <= 2) {
-      throw new AppError("Senha muito fraca.");
-    };
-
-
-    const hashedPassword = await hash(password, 8);
-
-
-    const user = {
-      name,
-      email,
-      password: hashedPassword
-    };
-
-
-    await knex("users").insert(user);
-
+    await userCreateService.execute({ name, email, password})
 
     return response.status(200).json({
       status: "OK.",
@@ -56,6 +26,7 @@ class UserController {
     const { name, email, password, old_password } = request.body;
     const user_id = request.user.id;
 
+    const userRepository = new UserRepository();
 
     const user = await knex("users").where({ id: user_id }).first();
 
